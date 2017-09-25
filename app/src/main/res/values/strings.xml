@@ -1,0 +1,14 @@
+<resources>
+    <string name="action_go_top">맨 위로</string>
+    <string name="action_refresh">새로 고침</string>
+    <string name="action_settings">설정</string>
+    <string name="action_share">공유</string>
+    <string name="app_name">Community</string>
+    <string name="copyright">summertaker@gmail.com</string>
+    <string name="loading">로드 중&#8230;</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_open_in_new">새 창에서 열기</string>
+    <string name="title_activity_article_view">ArticleViewActivity</string>
+
+</resources>
