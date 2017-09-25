@@ -14,7 +14,11 @@
             android:id="@+id/tvContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/app_name"/>
+            android:lineSpacingExtra="5dp"
+            android:padding="10dp"
+            android:text="@null"
+            android:textColor="#000"
+            android:textSize="17sp" />
 
     </ScrollView>
 
