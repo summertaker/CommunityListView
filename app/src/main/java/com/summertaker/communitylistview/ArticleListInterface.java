@@ -4,7 +4,7 @@ public interface ArticleListInterface {
 
     void onPictureClick(int position, String imageUrl);
 
-    void onNameClick(int position);
+    void onTitleClick(int position);
 
     void onCloseClick(int position);
 }

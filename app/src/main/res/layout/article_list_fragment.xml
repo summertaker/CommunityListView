@@ -13,7 +13,7 @@
         android:clipToPadding="false"
         android:divider="#d7d7d7"
         android:dividerHeight="1dp"
-        android:listSelector="#18000000"
+        android:listSelector="#10000000"
         android:scrollbarStyle="outsideOverlay"
         android:visibility="gone" />
 

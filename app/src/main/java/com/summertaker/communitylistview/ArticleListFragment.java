@@ -7,12 +7,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -20,9 +21,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.summertaker.communitylistview.common.BaseApplication;
-import com.summertaker.communitylistview.data.ArticleData;
+import com.summertaker.communitylistview.data.ArticleListData;
 import com.summertaker.communitylistview.data.SiteData;
-import com.summertaker.communitylistview.parser.Todayhumor;
+import com.summertaker.communitylistview.parser.RuliwebParser;
+import com.summertaker.communitylistview.parser.TodayhumorParser;
 import com.summertaker.communitylistview.util.EndlessScrollListener;
 import com.summertaker.communitylistview.util.Util;
 
@@ -40,6 +42,7 @@ public class ArticleListFragment extends Fragment implements ArticleListInterfac
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private boolean mIsRefreshMode = false;
 
+    //private LinearLayout mLoLoading;
     //private ProgressBar mPbLoading;
     //private LinearLayout mLoLoadMore;
 
@@ -50,13 +53,13 @@ public class ArticleListFragment extends Fragment implements ArticleListInterfac
     private int mCurrentPage = 1;
     private boolean mIsLoading = false;
 
-    private ArrayList<ArticleData> mArticleList;
+    private ArrayList<ArticleListData> mArticleList;
     private ListView mListView;
     protected ArticleListAdapter mAdapter;
 
     // Container Activity must implement this interface
     public interface ArticleListFragmentListener {
-        public void onArticleListFragmentEvent(String event);
+        public void onArticleListFragmentEvent(String event, boolean isRefreshMode);
     }
 
     @Override
@@ -96,6 +99,7 @@ public class ArticleListFragment extends Fragment implements ArticleListInterfac
         mSwipeRefreshLayout = rootView.findViewById(R.id.swiperefresh);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.swipe_color_1, R.color.swipe_color_2, R.color.swipe_color_3, R.color.swipe_color_4);
 
+        //mLoLoading = rootView.findViewById(R.id.loLoading);
         //mPbLoading = rootView.findViewById(R.id.pbLoading);
         //mLoLoadMore = rootView.findViewById(R.id.loLoadMore);
 
@@ -107,19 +111,32 @@ public class ArticleListFragment extends Fragment implements ArticleListInterfac
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                ArticleData data = (ArticleData) adapterView.getItemAtPosition(i);
+                ArticleListData data = (ArticleListData) adapterView.getItemAtPosition(i);
 
+                String title = data.getTitle();
                 String url = data.getUrl();
 
                 //Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                 //startActivity(intent);
 
-                //Intent intent = new Intent(getActivity(), ArticleViewActivity.class);
-                Intent intent = new Intent(getActivity(), ArticleDetailActivity.class);
+                //Intent intent = new Intent(getActivity(), WebViewActivity.class);
+                //Intent intent = new Intent(getActivity(), WebActivity.class);
+
+                //-------------------------------------------------------------------------
+                // "Empty Activity" 템플릿 사용 시 툴바에 프로그레스바 표시할 때 사용하는
+                // setSupportProgressBarIndeterminateVisibility(true);가 Deprecated 됨
+                //-------------------------------------------------------------------------
+                //Intent intent = new Intent(getActivity(), ArticleDetailActivity.class);
+                // 그래서 "Basic Activity" 템플릿 사용해서 직접 프로그레스바를 추가함
+                // https://stackoverflow.com/questions/27788195/setprogressbarindeterminatevisibilitytrue-not-working
+                Intent intent = new Intent(getActivity(), ArticleViewActivity.class);
+
+                intent.putExtra("title", title);
                 intent.putExtra("url", url);
 
-                startActivityForResult(intent, 100);
-                getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                startActivity(intent);
+                //startActivityForResult(intent, 100);
+                //getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
         });
 
@@ -187,7 +204,7 @@ public class ArticleListFragment extends Fragment implements ArticleListInterfac
 
         mIsLoading = true;
 
-        mListener.onArticleListFragmentEvent("onLoadDataStarted");
+        mListener.onArticleListFragmentEvent("onLoadDataStarted", mIsRefreshMode);
 
         requestData();
     }
@@ -231,14 +248,15 @@ public class ArticleListFragment extends Fragment implements ArticleListInterfac
     }
 
     private void parseData(String response) {
-        if (!response.isEmpty()) {
-            if (mIsRefreshMode) {
-                mArticleList.clear();
-            }
-            if (mSiteData.getUrl().contains("todayhumor")) {
-                Todayhumor parser = new Todayhumor();
-                parser.parseList(response, mArticleList);
-            }
+        if (mIsRefreshMode) {
+            mArticleList.clear();
+        }
+        if (mSiteData.getUrl().contains("todayhumor")) {
+            TodayhumorParser todayhumorParser = new TodayhumorParser();
+            todayhumorParser.parseList(response, mArticleList);
+        } else if (mSiteData.getUrl().contains("ruliweb")) {
+            RuliwebParser ruliwebParser = new RuliwebParser();
+            ruliwebParser.parseList(response, mArticleList);
         }
 
         renderData();
@@ -253,12 +271,11 @@ public class ArticleListFragment extends Fragment implements ArticleListInterfac
         //    //gridView.setOnItemClickListener(itemClickListener);
         //}
 
-        mAdapter.notifyDataSetChanged();
-
         if (mIsRefreshMode) {
             onRefreshFinished();
         } else {
             if (mCurrentPage == 1) {
+                //mLoLoading.setVisibility(View.GONE);
                 //mPbLoading.setVisibility(View.GONE);
                 mListView.setVisibility(View.VISIBLE);
             }
@@ -268,10 +285,12 @@ public class ArticleListFragment extends Fragment implements ArticleListInterfac
             //mLoLoadMore.setVisibility(View.GONE);
         }
 
+        mAdapter.notifyDataSetChanged();
+
         mCurrentPage++;
         mIsLoading = false;
 
-        mListener.onArticleListFragmentEvent("onLoadDataFinished");
+        mListener.onArticleListFragmentEvent("onLoadDataFinished", mIsRefreshMode);
     }
 
     private void onRefreshFinished() {
@@ -314,7 +333,7 @@ public class ArticleListFragment extends Fragment implements ArticleListInterfac
     }
 
     @Override
-    public void onNameClick(int position) {
+    public void onTitleClick(int position) {
 
     }
 

@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.summertaker.communitylistview.common.BaseDataAdapter;
-import com.summertaker.communitylistview.data.ArticleData;
+import com.summertaker.communitylistview.data.ArticleListData;
 
 import java.util.ArrayList;
 
@@ -15,9 +15,9 @@ public class ArticleListAdapter extends BaseDataAdapter {
 
     private Context mContext;
     private LayoutInflater mLayoutInflater;
-    private ArrayList<ArticleData> mDataList = null;
+    private ArrayList<ArticleListData> mDataList = null;
 
-    public ArticleListAdapter(Context context, ArrayList<ArticleData> dataList) {
+    public ArticleListAdapter(Context context, ArrayList<ArticleListData> dataList) {
         this.mContext = context;
         this.mLayoutInflater = LayoutInflater.from(context);
         this.mDataList = dataList;
@@ -40,7 +40,7 @@ public class ArticleListAdapter extends BaseDataAdapter {
 
     public View getView(final int position, View convertView, ViewGroup parent) {
         final ViewHolder holder;
-        final ArticleData articleData = mDataList.get(position);
+        final ArticleListData articleListData = mDataList.get(position);
 
         if (convertView == null) {
             holder = new ViewHolder();
@@ -48,21 +48,21 @@ public class ArticleListAdapter extends BaseDataAdapter {
             convertView = mLayoutInflater.inflate(R.layout.article_list_item, null);
 
             holder.tvTitle = convertView.findViewById(R.id.tvTitle);
-            holder.tvLike = convertView.findViewById(R.id.tvLike);
+//            holder.tvLike = convertView.findViewById(R.id.tvLike);
 
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.tvTitle.setText(articleData.getTitle());
-        holder.tvLike.setText(articleData.getLike());
+        holder.tvTitle.setText(articleListData.getTitle());
+        //holder.tvLike.setText(articleListData.getLike());
 
         return convertView;
     }
 
     static class ViewHolder {
         TextView tvTitle;
-        TextView tvLike;
+        //TextView tvLike;
     }
 }

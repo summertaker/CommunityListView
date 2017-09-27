@@ -1,7 +1,6 @@
 package com.summertaker.communitylistview;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -11,19 +10,22 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import com.summertaker.communitylistview.common.BaseActivity;
 import com.summertaker.communitylistview.common.BaseApplication;
 import com.summertaker.communitylistview.util.SlidingTabLayout;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener, ArticleListFragment.ArticleListFragmentListener {
 
-    ProgressBar mProgressBar;
+    ProgressBar mPbToolbar;
+    //ProgressBar mPbLoading;
+    //LinearLayout mLoLoadMore;
 
     ActionBarDrawerToggle mDrawerToggle;
     ViewPager mViewPager;
@@ -34,6 +36,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.main_activity);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
+        //toolbar.setTitle(R.string.app_name);
         setSupportActionBar(toolbar);
         toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -42,8 +45,11 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        mProgressBar = findViewById(R.id.toolbar_progress_bar);
+        mPbToolbar = findViewById(R.id.toolbar_progress_bar);
+        //mPbLoading = findViewById(R.id.pbLoading);
+        //mLoLoadMore = findViewById(R.id.loLoadMore);
 
+        /*
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,6 +58,7 @@ public class MainActivity extends AppCompatActivity
                 runFragment("goBack");
             }
         });
+        */
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         mDrawerToggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -76,19 +83,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            //super.onBackPressed();
-            runFragment("goBack");
-        }
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
+        //getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
@@ -137,6 +133,17 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            //super.onBackPressed();
+            runFragment("goBack");
+        }
     }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
@@ -206,11 +213,18 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onArticleListFragmentEvent(String event) {
+    public void onArticleListFragmentEvent(String event, boolean isRefreshMode) {
         switch (event) {
             case "onLoadDataStarted":
+                if (!isRefreshMode) {
+                    //mLoLoadMore.setVisibility(View.VISIBLE);
+                }
                 break;
             case "onLoadDataFinished":
+                if (!isRefreshMode) {
+                    //mPbLoading.setVisibility(View.GONE);
+                    //mLoLoadMore.setVisibility(View.GONE);
+                }
                 break;
         }
     }

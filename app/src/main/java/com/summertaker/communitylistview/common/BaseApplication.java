@@ -52,7 +52,7 @@ public class BaseApplication extends Application {
         //mSiteData.add(new SiteData("더쿠 48돌", "http://theqoo.net/dol48?filter_mode=normal"));
         //mSiteData.add(new SiteData("더쿠 사카미치", "http://theqoo.net/index.php?mid=jdol&filter_mode=normal&category=29770"));
         mSiteList.add(new SiteData("오유 베오베", USER_AGENT_MOBILE, "http://m.todayhumor.co.kr/list.php?table=bestofbest", "&page="));
-        //mSiteList.add(new SiteData("루리웹 힛갤", "http://m.ruliweb.com/best/selection?page=1"));
+        mSiteList.add(new SiteData("루리웹 힛갤", USER_AGENT_MOBILE, "http://m.ruliweb.com/best/selection", "?page=1"));
         //mSiteList.add(new SiteData("보배 베스트", "http://m.bobaedream.co.kr/board/new_writing/best/1"));
         //mSiteList.add(new SiteData("웃대 오늘베", "http://m.humoruniv.com/board/list.html?table=pds&st=day&pg=0"));
         //mSiteList.add(new SiteData("뽐뿌 핫", "http://m.ppomppu.co.kr/new/hot_bbs.php?page=1"));

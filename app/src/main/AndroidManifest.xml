@@ -22,8 +22,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".ArticleDetailActivity"/>
+        <activity android:name=".ArticleDetailActivity" />
+        <activity android:name=".WebViewActivity" />
+        <activity
+            android:name=".WebActivity"
+            android:label="@string/title_activity_web"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ArticleViewActivity"
+            android:label="@string/title_activity_article_view"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ImageViewActivity"
+            android:label="@string/title_activity_image_view"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
